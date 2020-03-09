@@ -26,11 +26,6 @@ provisioner:
   name: ansible
   playbooks:
     cleanup: cleanup.yml
-  lint: |
-    set -e
-    yamllint .
-    ansible-lint
-    flake8
 verifier:
   name: ansible
   
