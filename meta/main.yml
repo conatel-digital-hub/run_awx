@@ -17,6 +17,8 @@ galaxy_info:
     - docker
     - docker-compose
     - postgres
+    - awx
+    - ansible
 
 dependencies:
   - conatel_digital_hub.run_postgres
