@@ -15,6 +15,7 @@ Has only been teseted for the following versions:
   - PostgresSQL 10
 - AWX
   - 7.0.0
+  - 8.0.0
 
 We suggest encrypting the variables file using `ansible-vault`. For example:
 
