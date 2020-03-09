@@ -1,0 +1,16 @@
+- name: Check if docker-compose.yml file exists
+  stat:
+    path: '{{ project_dir }}/awx/docker-compose.yml'
+  register: result
+
+- name: Run Docker Compose down
+  docker_compose:
+    project_src: '{{ project_dir }}/awx'
+    state: absent
+    remove_volumes: '{{ remove_volumes }}'
+  when: result.stat.exists
+
+- name: Delete folder is 'state' is absent
+  file:
+    path: '{{ project_dir }}/awx'
+    state: absent

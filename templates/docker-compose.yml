@@ -1,0 +1,72 @@
+#jinja2: lstrip_blocks: True
+version: '3'
+services:
+  memcached:
+    image: {{ awx_memcached_image }}:{{ awx_memcached_version }}
+    container_name: awx_memcached
+    restart: unless-stopped
+    environment:
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+{% if external_network is defined %}    
+    networks:
+      - {{ external_network }}
+{% endif %}
+
+  rabbitmq:
+    image: {{ awx_rabbitmq_image }}
+    container_name: awx_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_VHOST: {{ awx_rabbitmq_default_vhost }}
+      RABBITMQ_DEFAULT_USER: {{ awx_rabbitmq_user }}
+      RABBITMQ_DEFAULT_PASS: {{ awx_rabbitmq_password | quote }}
+      RABBITMQ_ERLANG_COOKIE: {{ awx_rabbitmq_erlang_cookie }}
+{% if external_network is defined %}    
+    networks:
+      - {{ external_network }}
+{% endif %}
+
+  web:
+    image: '{{ awx_web_image }}'
+    container_name: {{ awx_web_host }}
+    depends_on:
+      - rabbitmq
+      - memcached
+    hostname: {{ awx_web_host }}
+    user: root
+    ports:
+      - "8052:8052"
+    restart: unless-stopped
+    volumes:
+      - "{{ project_dir }}/awx/SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "{{ project_dir }}/awx/environment.sh:/etc/tower/conf.d/environment.sh"
+      - "{{ project_dir }}/awx/credentials.py:/etc/tower/conf.d/credentials.py"
+{% if external_network is defined %}    
+    networks:
+      - {{ external_network }}
+{% endif %}
+
+  task:
+    image: {{ awx_task_image }}
+    container_name: {{ awx_task_host }}
+    depends_on:
+      - rabbitmq
+      - memcached
+      - web
+    hostname: {{ awx_task_host }}
+    user: root
+    restart: unless-stopped
+    volumes:
+      - "{{ project_dir }}/awx/SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "{{ project_dir }}/awx/environment.sh:/etc/tower/conf.d/environment.sh"
+      - "{{ project_dir }}/awx/credentials.py:/etc/tower/conf.d/credentials.py"
+{% if external_network is defined %}    
+    networks:
+      - {{ external_network }}
+
+networks:
+  {{ external_network }}:
+    external: true
+{% endif %}

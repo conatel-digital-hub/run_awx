@@ -1,0 +1,43 @@
+- name: Check variables
+  assert:
+    that:
+      - secret_key is defined
+
+- name: Create the project directory
+  file:
+    path: '{{ project_dir }}/awx'
+    state: directory
+
+- name: Copy template files
+  template:
+    src: '{{ item }}'
+    dest: '{{ project_dir }}/awx/{{ item }}'
+    mode: 0600
+  loop:
+    - environment.sh
+    - credentials.py
+    - docker-compose.yml
+  register: awx_compose_config
+
+- name: Render SECRET_KEY file
+  copy:
+    content: '{{ secret_key }}'
+    dest: '{{ project_dir }}/awx/SECRET_KEY'
+    mode: 0600
+  register: awx_secret_key
+
+- name: Start the containers
+  docker_compose:
+    project_src: '{{ project_dir }}/awx'
+    restarted: '{{ awx_compose_config is changed or awx_secret_key is changed }}'
+    build: yes
+    state: present
+  register: awx_compose_start
+
+- name: 'Update CA trust in awx web container'
+  shell: docker exec {{ awx_web_host }} '/usr/bin/update-ca-trust'
+  when: awx_compose_config.changed or awx_compose_start.changed
+
+- name: 'Update CA trust in awx task container'
+  shell: docker exec {{ awx_task_host }} '/usr/bin/update-ca-trust'
+  when: awx_compose_config.changed or awx_compose_start.changed

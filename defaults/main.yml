@@ -1,0 +1,30 @@
+---
+awx_database: awx
+awx_database_host: postgres
+awx_database_port: 5432
+awx_database_username: awx
+awx_database_password: awxpass
+
+awx_version: latest
+awx_admin_username: admin
+awx_admin_password: awxpass
+
+awx_web_host: awxweb
+awx_web_image: 'ansible/awx_web:{{ awx_version }}'
+
+awx_task_host: awxtask
+awx_task_image: 'ansible/awx_task:{{ awx_version }}'
+
+awx_rabbitmq_version: '3.7.4'
+awx_rabbitmq_image: 'ansible/awx_rabbitmq:{{ awx_rabbitmq_version }}'
+awx_rabbitmq_default_vhost: 'awx'
+awx_rabbitmq_erlang_cookie: 'cookiemonster'
+awx_rabbitmq_host: 'rabbitmq'
+awx_rabbitmq_port: '5672'
+awx_rabbitmq_user: 'guest'
+awx_rabbitmq_password: 'guest'
+
+awx_memcached_image: 'memcached'
+awx_memcached_version: 'alpine'
+awx_memcached_host: 'memcached'
+awx_memcached_port: '11211'

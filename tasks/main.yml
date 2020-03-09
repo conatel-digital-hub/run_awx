@@ -1,0 +1,11 @@
+---
+- name: Check variables
+  assert:
+    that:
+      - project_dir is defined
+
+- import_tasks: ./present.yml
+  when: state == 'present'
+
+- import_tasks: ./absent.yml
+  when: state == 'absent'

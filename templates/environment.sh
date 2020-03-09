@@ -1,0 +1,11 @@
+DATABASE_USER={{ awx_database_username }}
+DATABASE_NAME={{ awx_database }}
+DATABASE_HOST={{ awx_database_host | default('postgres') }}
+DATABASE_PORT={{ awx_database_port }}
+DATABASE_PASSWORD={{ awx_database_password }}
+MEMCACHED_HOST={{ awx_memcached_host }}
+MEMCACHED_PORT={{ awx_memcached_port }}
+RABBITMQ_HOST={{ awx_rabbitmq_host }}
+RABBITMQ_PORT={{ awx_rabbitmq_port }}
+AWX_ADMIN_USER={{ awx_admin_username }}
+AWX_ADMIN_PASSWORD={{ awx_admin_password | quote }}

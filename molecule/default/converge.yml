@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    awx_version: '7.0.0'
+    postgres_version: '10'
+    postgres_expose_port: True
+    postgres_port: 5432
+    project_dir: '/tmp/lib'
+    state: present
+    external_network: docker_network
+    secret_key: not_secret_key
+    remove_volumes: yes
+    sql_scripts:
+      - ./create_awx_database.sql
+  tasks:
+    - name: Create the docker network
+      docker_network:
+        name: '{{ external_network }}'
+        state: 'present'
+    - import_role: 
+        name: conatel_digital_hub.run_postgres
+    - import_role: 
+        name: run_awx

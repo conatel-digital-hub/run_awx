@@ -1,0 +1,17 @@
+---
+  - hosts: localhost
+    connection: local
+    vars:
+      project_dir: '/tmp/lib'
+      state: absent
+      remove_volumes: yes
+      external_network: docker_network
+    tasks:
+      - name: Create the docker network
+        docker_network:
+          name: '{{ external_network }}'
+          state: 'absent'
+      - import_role: 
+          name: run_awx
+      - import_role: 
+          name: conatel_digital_hub.run_postgres
