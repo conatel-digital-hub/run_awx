@@ -1,4 +1,4 @@
-Run Postgres DB
+Run AWX
 =========
 
 Runs an AWX deployment using `docker-compose`.
