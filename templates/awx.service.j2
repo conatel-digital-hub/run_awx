@@ -5,11 +5,12 @@ After=docker.service
 
 [Service]
 Restart=always
+TimeoutStartSec=300
 
 WorkingDirectory={{ project_dir }}/awx
 
 # Compose up
-ExecStart={{ docker_compose_path }} up -d
+ExecStart={{ docker_compose_path }} up
 
 # Compose down, remove containers and volumes
 ExecStop={{ docker_compose_path }} down -v
