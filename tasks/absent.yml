@@ -1,9 +1,14 @@
-- name: Start service awx, if not started
-  service:
-    name: awx.service
-    state: started
-    enabled: true
-  when: service is defined and service == True
+- name: Try to stop the AWX Service
+  block:
+    - name: Start service awx, if not started
+      service:
+        name: awx.service
+        state: started
+        enabled: true
+      when: service is defined and service == True
+  rescue:
+    - debug:
+        msg: 'Service not found'
 
 - name: Check if docker-compose.yml file exists
   stat:
