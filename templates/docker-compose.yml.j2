@@ -4,7 +4,7 @@ services:
   memcached:
     image: {{ awx_memcached_image }}:{{ awx_memcached_version }}
     container_name: awx_memcached
-    restart: unless-stopped
+    restart: always
     environment:
       http_proxy: {{ http_proxy | default('') }}
       https_proxy: {{ https_proxy | default('') }}
@@ -17,7 +17,7 @@ services:
   rabbitmq:
     image: {{ awx_rabbitmq_image }}
     container_name: awx_rabbitmq
-    restart: unless-stopped
+    restart: always
     environment:
       RABBITMQ_DEFAULT_VHOST: {{ awx_rabbitmq_default_vhost }}
       RABBITMQ_DEFAULT_USER: {{ awx_rabbitmq_user }}
@@ -38,7 +38,7 @@ services:
     user: root
     ports:
       - "8052:8052"
-    restart: unless-stopped
+    restart: always
     volumes:
       - "{{ project_dir }}/awx/SECRET_KEY:/etc/tower/SECRET_KEY"
       - "{{ project_dir }}/awx/environment.sh:/etc/tower/conf.d/environment.sh"
@@ -57,7 +57,7 @@ services:
       - web
     hostname: {{ awx_task_host }}
     user: root
-    restart: unless-stopped
+    restart: always
     volumes:
       - "{{ project_dir }}/awx/SECRET_KEY:/etc/tower/SECRET_KEY"
       - "{{ project_dir }}/awx/environment.sh:/etc/tower/conf.d/environment.sh"
