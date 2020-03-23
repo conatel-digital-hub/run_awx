@@ -55,6 +55,7 @@ Role Variables
 | `awx_rabbitmq_user` | String | `rabbitmq` | AWX RabbitMQ user. |
 | `awx_rabbitmq_version` | String | `3.7.4` | Version of the RabbitMQ container to use for AWX. |
 | `awx_version` | String | `latest` | AWX version. Check the [releases](https://github.com/ansible/awx/releases) page for all AWX versions. |
+| `docker_compose_path` | String | `/usr/local/bin/docker-compose` | Path hacia el binario `docker-compose`. |
 | `external_network` | String | | External docker network. Useful to connect the DB to other containers connected to that docker network. |
 | `project_dir` | String | `/etc/docker/compose` | Project directory where the `docker-compose.yml` file and other files will be stored. **Should be an absolute path**. |
 | `remove_volumes` | Boolean | `False` | Flag that indicates if the volume related to the database container should be removed after destroying or updating the project. |

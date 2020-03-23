@@ -9,10 +9,10 @@ Restart=always
 WorkingDirectory={{ project_dir }}/awx
 
 # Compose up
-ExecStart=/usr/bin/docker-compose up -d
+ExecStart={{ docker_compose_path }} up -d
 
 # Compose down, remove containers and volumes
-ExecStop=/usr/bin/docker-compose stop
+ExecStop={{ docker_compose_path }} down -v
 
 [Install]
 WantedBy=multi-user.target

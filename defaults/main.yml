@@ -30,3 +30,4 @@ awx_memcached_host: 'memcached'
 awx_memcached_port: '11211'
 
 service: False
+docker_compose_path: /usr/local/bin/docker-compose
