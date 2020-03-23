@@ -1,14 +1,14 @@
 - name: Try to stop the AWX Service
   block:
-    - name: Start service awx, if not started
+    - name: Stop the AWX service
       service:
         name: awx.service
         state: started
         enabled: true
-      when: service is defined and service == True
   rescue:
     - debug:
         msg: 'Service not found'
+  when: service is defined and service == True
 
 - name: Check if docker-compose.yml file exists
   stat:
@@ -23,20 +23,13 @@
     remove_volumes: '{{ remove_volumes }}'
   when: (service is not defined or service == False) and result.stat.exists
 
-- name: Start service awx, if not started
-  service:
-    name: awx.service
-    state: stopped
-    enabled: false
-  when: service is defined and service == True
-
-- name: Copy the awx.service file
+- name: Remove the awx.service file
   file:
     path: '/etc/systemd/system/awx.service'
     state: absent
   when: service is defined and service == True
 
-- name: Delete folder is 'state' is absent
+- name: Delete the service folder
   file:
     path: '{{ project_dir }}/awx'
     state: absent
