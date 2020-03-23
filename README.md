@@ -35,7 +35,7 @@ Role Variables
 
 | Variable | Type | Default | Comments | 
 | -------- | ---- | ------- | -------- |
-| `awx_admin_password` | String | `admin` | Password for the AWX administrator. |
+| `awx_admin_password` | String | `awxpass` | Password for the AWX administrator. |
 | `awx_admin_username` | String | `admin` | Username for the AWX administrator. |
 | `awx_database_host` | String | `postgres` | Hostname of the PostgreSQL database. |
 | `awx_database_password` | String | `awx` | Password of the AWX database administrator. |
@@ -54,15 +54,12 @@ Role Variables
 | `awx_rabbitmq_port` | String | `rabbitmq` | AWX RabbitMQ port. |
 | `awx_rabbitmq_user` | String | `rabbitmq` | AWX RabbitMQ user. |
 | `awx_rabbitmq_version` | String | `3.7.4` | Version of the RabbitMQ container to use for AWX. |
-| `awx_task_host` | String | `awxtask` | Hostname of the AWX task container. |
-| `awx_task_image` | String | `ansible/awx_task:latest` | Image of the AWX web container. |
 | `awx_version` | String | `latest` | AWX version. Check the [releases](https://github.com/ansible/awx/releases) page for all AWX versions. |
-| `awx_web_host` | String | `awxweb` | Hostname of the AWX web container. |
-| `awx_web_image` | String | `ansible/awx_web:latest` | Image of the AWX web container. |
 | `external_network` | String | | External docker network. Useful to connect the DB to other containers connected to that docker network. |
-| `project_dir` | String | `/tmp/lib` | Project directory where the `docker-compose.yml` file and other files will be stored. **Should be an absolute path**. |
+| `project_dir` | String | `/etc/docker/compose` | Project directory where the `docker-compose.yml` file and other files will be stored. **Should be an absolute path**. |
 | `remove_volumes` | Boolean | `False` | Flag that indicates if the volume related to the database container should be removed after destroying or updating the project. |
 | `secret_key` | String |  | AWX secret key. |
+| `service` | Boolean | `False` | Wether to run AWX as a service or not. |
 | `state` | String | `present` | State of the project. If set to `present` the project will run the `docker-compose.yml` file. If set to `absent` it will stop all the containers and remove the `{{project_dir}}/postgres` folder from the server. |
 
 
@@ -85,19 +82,31 @@ CREATE DATABASE {{ awx_database }} OWNER {{ awx_database_username }};
 ```yaml
 ---
 - hosts: server
-  vars_files:
-    - secrets.yaml
   vars:
+    postgres_version: '10'
+    postgres_expose_port: True
+    postgres_admin_username: postgres
+    postgres_admin_password: postgrespass
+    awx_version: '8.0.0'
+    awx_database: awx
+    awx_database_username: awx
+    state: present
+    external_network: awx_vpn
+    secret_key: conatel
     sql_scipts:
       - create_awx_database.sql
   tasks:
-    - name: Create the docker network
+    - name: Create the external docker network
       docker_network:
-        name: '{{ external_network }}'
-        state: 'present'
-    - import_role: 
+        name: '{{external_network}}'
+        state: present
+
+    - name: Start the PostgreSQL database service
+      import_role:
         name: conatel_digital_hub.run_postgres
-    - import_role: 
+
+    - name: Start the AWX service
+      import_role:
         name: conatel_digital_hub.run_awx
 ```
 
