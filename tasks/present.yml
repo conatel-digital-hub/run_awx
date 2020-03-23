@@ -45,6 +45,7 @@
     name: awx.service
     state: started
     enabled: true
+    daemon_reload: true
   when: service is defined and service == True
 
 - name: Start the containers
