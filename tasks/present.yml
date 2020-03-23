@@ -25,6 +25,7 @@
     src: docker-compose.yml.j2
     dest: '{{ project_dir }}/awx/docker-compose.yml'
     mode: 0600
+  register: compose_config
 
 - name: Copy the awx.service file
   template:
@@ -49,11 +50,11 @@
 - name: Start the containers
   docker_compose:
     project_src: '{{ project_dir }}/awx'
-    restarted: '{{ awx_compose_config is changed or awx_secret_key is changed }}'
+    restarted: '{{ compose_config is changed }}'
     build: yes
     state: present
   register: awx_compose_start
-  when: service is defined and service == False
+  when: service is not defined and service == False
 
 - name: 'Update CA trust in awx web container'
   shell: docker exec {{ awx_web_host }} '/usr/bin/update-ca-trust'
