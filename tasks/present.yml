@@ -32,6 +32,7 @@
     src: awx.service.j2
     dest: '/etc/systemd/system/awx.service'
     mode: 0600
+  when: service is defined and service == True
 
 - name: Render SECRET_KEY file
   copy:
@@ -55,12 +56,12 @@
     build: yes
     state: present
   register: awx_compose_start
-  when: service is not defined and service == False
+  when: service is not defined or service == False
 
 - name: 'Update CA trust in awx web container'
   shell: docker exec {{ awx_web_host }} '/usr/bin/update-ca-trust'
-  when: (awx_compose_config is defined and awx_compose_config.changed) or awx_compose_start.changed or (service is defined and service == True)
+  when: (awx_compose_config is defined and awx_compose_config.changed) or (service is not defined or service == False)
 
 - name: 'Update CA trust in awx task container'
   shell: docker exec {{ awx_task_host }} '/usr/bin/update-ca-trust'
-  when: (awx_compose_config is defined and awx_compose_config.changed) or awx_compose_start.changed or (service is defined and service == True)
+  when: (awx_compose_config is defined and awx_compose_config.changed) or (service is not defined or service == False)
